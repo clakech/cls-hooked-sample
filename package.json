@@ -1,0 +1,32 @@
+{
+  "name": "cls-hooked-sample",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clakech/cls-hooked-sample.git"
+  },
+  "keywords": [
+    "async_hooks",
+    "async_wrap",
+    "cls",
+    "expressjs",
+    "nodejs",
+    "tracing"
+  ],
+  "author": "Cyril Lakech <@cyril_lakech>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/clakech/cls-hooked-sample/issues"
+  },
+  "homepage": "https://github.com/clakech/cls-hooked-sample#readme",
+  "dependencies": {
+    "cls-hooked": "^4.2.2",
+    "express": "^4.15.4",
+    "uuid": "^3.1.0"
+  }
+}
