@@ -41,3 +41,39 @@ And now we have the async_hooks experimental but accepted in the NodeJS Enhancem
 
 Bref. Nothing perfect, but still we can have some fun hacking with those tools.
 
+## Experiment the CLS-hooked with ExpressJS
+
+Jeff-Lewis forked the continuation-local-storage to remove async-listener and use AsyncWrap for NodeJS <v8 or async_hooks for NodeJS >v8.2 : [cls-hooked](https://github.com/Jeff-Lewis/cls-hooked)
+
+With the same API from CLS you can add a context to your current NodeJS "thread-local" (lol) / request.
+
+> Continuation-local storage works like thread-local storage in threaded programming, but is based on chains of Node-style callbacks instead of threads. The standard Node convention of functions calling functions is very similar to something called "continuation-passing style" in functional programming, and the name comes from the way this module allows you to set and get values that are scoped to the lifetime of these chains of function calls.
+
+All you have to do is to create a namespace to scope your context informations and they embed your chains of function calls inside a runner.
+
+Warning: this a an experimental "non production ready" solution !
+
+```
+// index.js
+const express = require('express');
+const cls = require('cls-hooked');
+const correlationIdBinder = require('./correlationIdBinder');
+const nestedService = require('./nestedService');
+const logger = require('./logger');
+
+const app = express();
+
+const ns = cls.createNamespace('sample');
+app.use(correlationIdBinder(ns));
+
+app.get('/', (req, res) => {
+    logger('Here we go !');
+    nestedService()
+        .then(something => res.send(something));
+});
+
+app.listen(3000, () =>
+    console.log('Example app listening on port 3000!')
+);
+```
+
