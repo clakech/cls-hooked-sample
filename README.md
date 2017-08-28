@@ -104,7 +104,7 @@ module.exports = ns => {
 
 Then in each layer / module / service that needs to log some information about current process, just log as you like with you preffered logger system
 
-```
+```javascript
 // nestedService.js 
 
 const logger = require('./logger');
@@ -117,7 +117,7 @@ module.exports = () => {
 
 But in your logger implementation, retrieve the current context data from the namespace and add your correlationId in your logs.
 
-```
+```javascript
 // logger.js 
 
 const cls = require('cls-hooked');
@@ -128,3 +128,26 @@ module.exports = message => {
     console.log(`${correlationId} => ${message}`)
 };
 ```
+
+And voila, when you run this code, you get all your logs but with this spicy correlationId you need to filter all the logs from the same request:
+
+``` 
+2eddc2e9-0662-459f-9725-01317449286d => Here we go !
+2eddc2e9-0662-459f-9725-01317449286d => Inside the beast
+5945228a-320d-4817-b92c-5755a4aca8ce => Here we go !
+5945228a-320d-4817-b92c-5755a4aca8ce => Inside the beast
+a5cea0be-98fc-4133-a8c2-74ab13b21f64 => Here we go !
+a5cea0be-98fc-4133-a8c2-74ab13b21f64 => Inside the beast
+2c766934-445d-49e0-9e04-6a17cc07acc5 => Here we go !
+2c766934-445d-49e0-9e04-6a17cc07acc5 => Inside the beast
+dce61009-9d12-491a-a5e1-87d769117c47 => Here we go !
+dce61009-9d12-491a-a5e1-87d769117c47 => Inside the beast
+e1ec6a6d-2e09-4636-93f6-8a0b5a3cc7c2 => Here we go !
+e1ec6a6d-2e09-4636-93f6-8a0b5a3cc7c2 => Inside the beast
+22152fdd-a1a8-4b85-bfea-9bf32cbe67ae => Here we go !
+22152fdd-a1a8-4b85-bfea-9bf32cbe67ae => Inside the beast
+889d5277-e55d-4061-8cfa-f13feda63f26 => Here we go !
+889d5277-e55d-4061-8cfa-f13feda63f26 => Inside the beast
+```
+
+Yes, I know, this is creppy because it is an experimental feature, the code is quite ugly, not scalable etc. We can tweak all this to get a lot more robust code. This is just a reminder of my latest friday afternoon hacking with NodeJS that may help  (or not) someone womewhere on the web ;)
