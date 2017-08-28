@@ -53,8 +53,11 @@ All you have to do is to create a namespace to scope your context informations a
 
 Warning: this a an experimental "non production ready" solution !
 
-```
+In your main ExpressJS app, create a namespace, then in a middleware ".run()" it and add you context data
+
+```javascript
 // index.js
+
 const express = require('express');
 const cls = require('cls-hooked');
 const correlationIdBinder = require('./correlationIdBinder');
@@ -77,3 +80,51 @@ app.listen(3000, () =>
 );
 ```
 
+```javascript
+// correlationIdBinder.js
+
+const uuidV4 = require('uuid/v4');
+const cls = require('cls-hooked');
+
+module.exports = ns => {
+    if (!ns) throw new Error('CLS namespace required');
+
+    return function clsifyMiddleware(req, res, next) {
+        ns.bindEmitter(req);
+        ns.bindEmitter(res);
+
+        ns.run(() => {
+            const correlationId = uuidV4();
+            cls.getNamespace('sample').set('correlationId', correlationId);
+            next();
+        });
+    };
+};
+```
+
+Then in each layer / module / service that needs to log some information about current process, just log as you like with you preffered logger system
+
+```
+// nestedService.js 
+
+const logger = require('./logger');
+
+module.exports = () => {
+    logger('Inside the beast');    
+    return Promise.resolve('Hello World!')
+}
+```
+
+But in your logger implementation, retrieve the current context data from the namespace and add your correlationId in your logs.
+
+```
+// logger.js 
+
+const cls = require('cls-hooked');
+
+module.exports = message => {
+    const ns = cls.getNamespace('sample');
+    const correlationId = ns.get('correlationId');
+    console.log(`${correlationId} => ${message}`)
+};
+```
